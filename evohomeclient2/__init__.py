@@ -122,6 +122,18 @@ class EvohomeClient(EvohomeBase):
 
     def temperatures(self):
         return self._get_single_heating_system().temperatures()
+
+    def zone_temperature(self, zone_id):
+        return self._get_single_heating_system().zone_temperature(zone_id)
+
+    def get_zone_id(self, zone_name):
+        """
+        Convenience function
+        """
+        return self._get_single_heating_system().get_zone_id(zone_name)
+
+    def zone_schedule(self, zone_id):
+        return self._get_single_heating_system().zone_schedule(zone_id)
     
     def zone_schedules_backup(self, filename):
         return self._get_single_heating_system().zone_schedules_backup(filename)

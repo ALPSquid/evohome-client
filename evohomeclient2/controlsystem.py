@@ -70,7 +70,7 @@ class ControlSystem(EvohomeBase):
                     'name': '',
                     'temp': self.hotwater.temperatureStatus['temperature'],
                     'setpoint': ''
-                  }
+                   }
 
         for zone in self._zones:
             yield {'thermostat': 'EMEA_ZONE',
@@ -78,7 +78,40 @@ class ControlSystem(EvohomeBase):
                     'name': zone.name,
                     'temp': zone.temperatureStatus['temperature'],
                     'setpoint': zone.heatSetpointStatus['targetTemperature']
-                  }
+                   }
+
+    def zone_temperature(self, zone_id):
+        zone = self.zones_by_id[zone_id]
+        return {'thermostat': 'EMEA_ZONE',
+                'id': zone.zoneId,
+                'name': zone.name,
+                'temp': zone.temperatureStatus['temperature'],
+                'setpoint': zone.heatSetpointStatus['targetTemperature']
+               }
+
+    def get_zone_id(self, zone_name):
+        """
+        Convenience function
+        """
+        return self.zones[zone_name].zoneId
+
+    def zone_schedule(self, zone_id):
+        """
+        Creates a dictionary of a zones weekly schedule
+        :param zone_id: ID of the zone to query
+        :return: A dictionary in the format:
+                    {day: {time: temp}}
+        """
+        schedule = self.zones_by_id[zone_id].schedule()["DailySchedules"]
+        week_sched = {}
+        for day in schedule:
+            day_sched = {}
+            for switch in day["Switchpoints"]:
+                time = switch["TimeOfDay"]
+                temp = switch["TargetTemperature"]
+                day_sched[time] = temp
+            week_sched[day["DayOfWeek"]] = day_sched
+        return week_sched
 
     def zone_schedules_backup(self, filename):
         print("Backing up zone schedule to: %s" % (filename))
