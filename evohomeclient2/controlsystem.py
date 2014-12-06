@@ -24,7 +24,7 @@ class ControlSystem(EvohomeBase):
             self.__dict__.update(local_data)
 
             for i, z_data in enumerate(data['zones']):
-                zone = Zone(client, z_data)
+                zone = Zone(client, location, z_data)
                 self._zones.append(zone)
                 self.zones[zone.name] = zone
                 self.zones_by_id[zone.zoneId] = zone
@@ -77,7 +77,8 @@ class ControlSystem(EvohomeBase):
                     'id': zone.zoneId,
                     'name': zone.name,
                     'temp': zone.temperatureStatus['temperature'],
-                    'setpoint': zone.heatSetpointStatus['targetTemperature']
+                    'setpoint': zone.heatSetpointStatus['targetTemperature'],
+                    'overridden': self.zones[zone.name].is_overridden()
                    }
 
     def zone_temperature(self, zone_id):

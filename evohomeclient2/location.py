@@ -23,6 +23,10 @@ class Location(EvohomeBase):
         data = self.client._convert(r.text)
 
         # Now feed into other elements
+        try:
+            data['gateways']
+        except KeyError:
+            self.client.reauthenticate()
         for gw in data['gateways']:
             gateway = self.gateways[gw['gatewayId']]
 

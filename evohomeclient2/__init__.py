@@ -98,6 +98,9 @@ class EvohomeClient(EvohomeBase):
         r = requests.get('https://rs.alarmnet.com:443/TotalConnectComfort/WebAPI/emea/api/v1/location/%s/installationInfo?includeTemperatureControlSystems=True' % location, headers=self.headers)
         return self._convert(r.text)
 
+    def reauthenticate(self):
+        self._login()
+
     def gateway(self):
         r = requests.get('https://rs.alarmnet.com:443/TotalConnectComfort/WebAPI/emea/api/v1/gateway', headers=self.headers)
         return self._convert(r.text)
