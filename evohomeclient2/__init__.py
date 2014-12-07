@@ -99,6 +99,8 @@ class EvohomeClient(EvohomeBase):
         return self._convert(r.text)
 
     def reauthenticate(self):
+        self.access_token = None
+        self.locations = []
         self._login()
 
     def gateway(self):

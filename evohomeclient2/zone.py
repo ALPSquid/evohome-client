@@ -57,28 +57,7 @@ class Zone(ZoneBase):
         """
         :return: Whether the current setpoint has been overridden
         """
-        # Doesn't apply time offset for now
-        utcOffset = self.location.__dict__['timeZone']['currentOffsetMinutes']
-        current_timestamp = datetime.utcnow()
-        current_day = current_timestamp.weekday()
-        current_time = datetime.strptime(current_timestamp.strftime("%H:%M:%S"), "%H:%M:%S")
-
-        last_setpoint_time = datetime.strptime("00:00:00", "%H:%M:%S")
-        last_setpoint_temp = 0.0
-        current_setpoint_temp = self.__dict__["heatSetpointStatus"]["targetTemperature"]
-
-        for setpoint in self.schedule()["DailySchedules"][current_day]["Switchpoints"]:
-            setpoint_time = datetime.strptime(setpoint["TimeOfDay"], "%H:%M:%S")
-            #print(str(current_time) + ", " + str(last_setpoint_time) + ", " + str(setpoint_time))
-            if last_setpoint_time < current_time < setpoint_time:
-                last_setpoint_temp = setpoint["TargetTemperature"]
-                break
-            elif current_time > setpoint_time:
-                last_setpoint_temp = setpoint["TargetTemperature"]
-                break
-            else:
-                last_setpoint_time = setpoint_time
-        return current_setpoint_temp != last_setpoint_temp
+        return self.__dict__["heatSetpointStatus"]["setpointMode"] == "TemporaryOverride"
 
 
     def set_temperature(self, temperature, until=None):
