@@ -22,11 +22,15 @@ class Location(EvohomeBase):
         r = requests.get('https://rs.alarmnet.com:443/TotalConnectComfort/WebAPI/emea/api/v1/location/%s/status?includeTemperatureControlSystems=True' % self.locationId, headers=self.client.headers)
         data = self.client._convert(r.text)
 
-        # Now feed into other elements
         try:
             data['gateways']
         except KeyError:
+            # Refresh token
+            print("Refreshing token")
             self.client.reauthenticate()
+            return self.status()
+
+        # Now feed into other elements
         for gw in data['gateways']:
             gateway = self.gateways[gw['gatewayId']]
 
