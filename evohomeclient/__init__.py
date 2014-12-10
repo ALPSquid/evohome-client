@@ -29,8 +29,13 @@ class EvohomeClient:
             response = requests.get(url, data=json.dumps(self.postdata), headers=self.headers)
 
             self.full_data = self._convert(response.content)[0]
-            
-            self.location_id = self.full_data['locationID']
+
+            try:
+                self.location_id = self.full_data['locationID']
+            except KeyError:
+                print("Refreshing Token")
+                self._populate_user_info(True)
+                return self._populate_full_data(True)
             
             self.devices = {}
             self.named_devices = {}
@@ -43,7 +48,7 @@ class EvohomeClient:
         self._populate_full_data(force_refresh)
         if self.gateway_data is None or force_refresh:
             url = 'https://rs.alarmnet.com/TotalConnectComfort/WebAPI/api/gateways?locationId=%s&allData=False' % self.location_id
-            response = requests.get(url, headers = self.headers)
+            response = requests.get(url, headers=self.headers)
             
             self.gateway_data = self._convert(response.content)[0]
 
