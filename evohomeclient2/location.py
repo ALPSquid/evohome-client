@@ -23,12 +23,13 @@ class Location(EvohomeBase):
         data = self.client._convert(r.text)
 
         try:
-            data['gateways']
+            if data[0]['code'] == 'Unauthorized':
+                # Refresh token
+                print("Refreshing token")
+                self.client.reauthenticate()
+                return self.status()
         except KeyError:
-            # Refresh token
-            print("Refreshing token")
-            self.client.reauthenticate()
-            return self.status()
+            pass
 
         # Now feed into other elements
         for gw in data['gateways']:

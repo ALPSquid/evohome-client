@@ -57,8 +57,7 @@ class Zone(ZoneBase):
         """
         :return: Whether the current setpoint has been overridden
         """
-        return self.__dict__["heatSetpointStatus"]["setpointMode"] == "TemporaryOverride"
-
+        return self.__dict__["heatSetpointStatus"]["setpointMode"] in ["TemporaryOverride", "PermanentOverride"]
 
     def set_temperature(self, temperature, until=None):
         if until is None:

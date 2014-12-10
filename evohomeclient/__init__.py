@@ -26,7 +26,7 @@ class EvohomeClient:
 
             self.headers['sessionId'] = sessionId
 
-            response = requests.get(url,data=json.dumps(self.postdata),headers=self.headers)
+            response = requests.get(url, data=json.dumps(self.postdata), headers=self.headers)
 
             self.full_data = self._convert(response.content)[0]
             
@@ -39,16 +39,16 @@ class EvohomeClient:
                 self.devices[device['deviceID']] = device
                 self.named_devices[device['name']] = device
                 
-    def _populate_gateway_info(self):
-        self._populate_full_data()
-        if self.gateway_data is None:
+    def _populate_gateway_info(self,  force_refresh=False):
+        self._populate_full_data(force_refresh)
+        if self.gateway_data is None or force_refresh:
             url = 'https://rs.alarmnet.com/TotalConnectComfort/WebAPI/api/gateways?locationId=%s&allData=False' % self.location_id
             response = requests.get(url, headers = self.headers)
             
             self.gateway_data = self._convert(response.content)[0]
 
-    def _populate_user_info(self):
-        if self.user_data is None:
+    def _populate_user_info(self, force_refresh=False):
+        if self.user_data is None or force_refresh:
             url = 'https://rs.alarmnet.com/TotalConnectComfort/WebAPI/api/Session'
             self.postdata = {'Username':self.username,'Password':self.password,'ApplicationId':'91db1612-73fd-4500-91b2-e63b069b185c'}
             self.headers = {'content-type':'application/json'}
@@ -87,7 +87,7 @@ class EvohomeClient:
             phrase
         :return: json local weather object
         """
-        self._populate_full_data()
+        self._populate_full_data(True)
         return self.full_data['weather']
 
     def _get_task_status(self, task_id):

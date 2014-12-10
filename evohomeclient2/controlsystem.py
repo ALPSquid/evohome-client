@@ -82,6 +82,7 @@ class ControlSystem(EvohomeBase):
                    }
 
     def zone_temperature(self, zone_id):
+        status = self.location.status()
         zone = self.zones_by_id[zone_id]
         return {'thermostat': 'EMEA_ZONE',
                 'id': zone.zoneId,
